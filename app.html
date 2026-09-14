@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>g-CAD Online v0.3</title>
+<style>
+:root{--bg:#101216;--panel:#181b21;--panel2:#20242c;--line:#303640;--text:#eef2f7;--muted:#9ca8b7;--accent:#66b3ff;--ok:#6ee7a8;--warn:#ffcc66;--danger:#ff7a7a}
+*{box-sizing:border-box}html,body{height:100%;margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
+button,input,select{font:inherit}button{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:7px 10px;cursor:pointer}button:hover{border-color:#5a6472;background:#262b34}.primary{background:#173654;border-color:#285f91}.primary:hover{background:#1c4268}.danger{color:#ffd3d3}
+#app{height:100%;display:grid;grid-template-columns:270px 1fr 300px;grid-template-rows:48px 1fr 28px;grid-template-areas:"top top top" "left view right" "status status status"}
+#top{grid-area:top;display:flex;align-items:center;gap:8px;padding:7px 10px;background:#15181d;border-bottom:1px solid var(--line)}
+#brand{font-weight:700;margin-right:12px;white-space:nowrap}.spacer{flex:1}.badge{font-size:12px;color:var(--muted);border:1px solid var(--line);padding:4px 7px;border-radius:999px}
+#left{grid-area:left;background:var(--panel);border-right:1px solid var(--line);overflow:auto;padding:12px}
+#right{grid-area:right;background:var(--panel);border-left:1px solid var(--line);overflow:auto;padding:12px}
+#viewWrap{grid-area:view;position:relative;min-width:0;min-height:0;background:radial-gradient(circle at center,#1d222a 0,#101317 70%)}
+#canvas{width:100%;height:100%;display:block;touch-action:none;outline:none}
+#viewHud{position:absolute;left:12px;top:12px;display:flex;gap:6px;flex-wrap:wrap;max-width:70%}
+#viewHud button{padding:5px 8px;font-size:12px;background:#171b21dd}
+#viewInfo{position:absolute;right:12px;top:12px;text-align:right;font-size:12px;color:#c7d0dc;background:#101318cc;border:1px solid #2f3540;border-radius:6px;padding:7px 9px;line-height:1.55;pointer-events:none}
+#hint{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);font-size:12px;color:var(--muted);background:#101318cc;border:1px solid #2b3039;border-radius:999px;padding:5px 10px;pointer-events:none;white-space:nowrap}
+#status{grid-area:status;display:flex;align-items:center;gap:14px;padding:0 10px;background:#12151a;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+.section{margin-bottom:18px}.section h3{font-size:13px;margin:0 0 9px;color:#d7dee8;font-weight:650;letter-spacing:.02em}.field{display:grid;grid-template-columns:1fr 92px;gap:8px;align-items:center;margin:7px 0}.field label{font-size:12px;color:#c2cbd6}.field input,.field select{width:100%;background:#111419;color:var(--text);border:1px solid var(--line);border-radius:5px;padding:6px 7px}.unit{position:relative}.unit input{padding-right:27px}.unit span{position:absolute;right:7px;top:7px;font-size:11px;color:#788493;pointer-events:none}.tree{border:1px solid var(--line);border-radius:6px;overflow:hidden}.treeItem{display:flex;align-items:center;gap:7px;padding:8px;border-bottom:1px solid #292e37;font-size:12px}.treeItem:last-child{border-bottom:0}.dot{width:9px;height:9px;border-radius:50%;background:#9ca8b7}.dot.gold{background:#d8b34e}.dot.stone{background:#67c7ff}.treeItem small{margin-left:auto;color:#758190}.history{border:1px solid var(--line);border-radius:6px;max-height:190px;overflow:auto}.history div{padding:7px 8px;border-bottom:1px solid #292e37;font-size:11px;color:#aeb8c5}.history div:last-child{border-bottom:0}.summary{background:#111419;border:1px solid var(--line);border-radius:6px;padding:9px;font-size:12px;line-height:1.7}.ok{color:var(--ok)}.warn{color:var(--warn)}.row{display:flex;gap:7px;flex-wrap:wrap}.row button{flex:1;min-width:72px}.mini{font-size:11px;color:var(--muted);line-height:1.5}.divider{height:1px;background:var(--line);margin:12px 0}.check{display:flex;gap:7px;align-items:flex-start;font-size:12px;color:#c4cdd7;margin:7px 0}.check input{margin-top:2px}
+@media(max-width:900px){#app{grid-template-columns:220px 1fr;grid-template-areas:"top top" "left view" "status status"}#right{display:none}}
+body.auth-pending #app{visibility:hidden}
+#authLoading{position:fixed;inset:0;display:grid;place-items:center;background:#101216;color:#eef2f7;z-index:9999;font-size:14px}
+body:not(.auth-pending) #authLoading{display:none}
+</style>
+</head>
+<body class="auth-pending">
+<div id="authLoading">ログイン状態を確認しています…</div>
+<div id="app">
+  <div id="top">
+    <div id="brand">g-CAD <span style="color:#8390a0;font-weight:500">Online v0.3</span></div>
+    <button id="newBtn">新規</button><button id="openBtn">開く</button><button id="saveBtn">保存</button><button id="undoBtn">元に戻す</button><button id="redoBtn">やり直す</button>
+    <div class="spacer"></div><span class="badge" id="userBadge">認証確認中</span><button id="logoutBtn">ログアウト</button><span class="badge">単位: mm</span><button class="primary" id="exportBtn">STLを書き出す</button><input id="fileInput" type="file" accept="application/json,.json" hidden />
+  </div>
+  <aside id="left">
+    <div class="section"><h3>モデルツリー</h3><div class="tree"><div class="treeItem"><span class="dot gold"></span>リング腕<small>Metal</small></div><div class="treeItem"><span class="dot stone"></span>中石<small>Reference</small></div><div class="treeItem"><span class="dot gold"></span>爪<small id="treeProngs">4 pcs</small></div><div class="treeItem"><span class="dot gold"></span>石座<small>Metal</small></div></div></div>
+    <div class="section"><h3>作成履歴</h3><div id="history" class="history"></div></div>
+    <div class="section"><h3>表示</h3><label class="check"><input type="checkbox" id="showStone" checked>中石を表示</label><label class="check"><input type="checkbox" id="showGrid" checked>基準グリッドを表示</label><label class="check"><input type="checkbox" id="wireframe">ワイヤーフレーム表示</label></div>
+  </aside>
+  <main id="viewWrap"><canvas id="canvas" tabindex="0"></canvas><div id="viewHud"><button data-view="front">正面</button><button data-view="right">右</button><button data-view="top">上</button><button data-view="iso">透視</button><button id="fitBtn">全体表示</button></div><div id="viewInfo"></div><div id="hint">左ドラッグ: 回転　｜　ホイール: 拡大縮小　｜　ダブルクリック: 全体表示</div></main>
+  <aside id="right">
+    <div class="section"><h3>リング</h3><div class="field"><label for="ringSize">日本サイズ</label><select id="ringSize"></select></div><div class="field"><label>内径</label><div class="unit"><input id="innerDiameter" readonly><span>mm</span></div></div><div class="field"><label for="shankWidth">腕幅</label><div class="unit"><input id="shankWidth" type="number" min="0.8" max="12" step="0.1"><span>mm</span></div></div><div class="field"><label for="shankThickness">腕厚</label><div class="unit"><input id="shankThickness" type="number" min="0.6" max="8" step="0.1"><span>mm</span></div></div></div>
+    <div class="section"><h3>中石</h3><div class="field"><label for="stoneDiameter">直径</label><div class="unit"><input id="stoneDiameter" type="number" min="1" max="20" step="0.1"><span>mm</span></div></div><div class="field"><label for="stoneDepth">深さ</label><div class="unit"><input id="stoneDepth" type="number" min="0.5" max="12" step="0.1"><span>mm</span></div></div><div class="field"><label for="seatClearance">石座クリアランス</label><div class="unit"><input id="seatClearance" type="number" min="0.05" max="2" step="0.05"><span>mm</span></div></div></div>
+    <div class="section"><h3>爪</h3><div class="field"><label for="prongCount">本数</label><select id="prongCount"><option value="4">4本</option><option value="6">6本</option></select></div><div class="field"><label for="prongDiameter">爪径</label><div class="unit"><input id="prongDiameter" type="number" min="0.4" max="2.5" step="0.05"><span>mm</span></div></div><div class="field"><label for="prongHeight">爪高さ</label><div class="unit"><input id="prongHeight" type="number" min="1" max="10" step="0.1"><span>mm</span></div></div></div>
+    <div class="section"><h3>造形チェック</h3><div id="checkSummary" class="summary"></div></div>
+    <div class="section"><h3>STL出力</h3><div class="mini">STLには中石を含めず、リング腕・石座・爪の金属部分だけを書き出します。1モデル単位 = 1 mm です。</div><div class="divider"></div><div class="row"><button class="primary" id="exportBtn2">金属をSTL出力</button></div></div>
+  </aside>
+  <div id="status"><span id="statusText">準備完了</span><span id="triText"></span><span id="sizeText"></span></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
+<script src="js/config.js"></script>
+<script src="js/auth-guard.js"></script>
+<script src="js/cad.js"></script>
+</body>
+</html>

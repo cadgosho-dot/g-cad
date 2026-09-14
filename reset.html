@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>g-CAD パスワード再設定</title>
+<style>
+*{box-sizing:border-box}html,body{min-height:100%;margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#101216;color:#eef2f7}body{display:grid;place-items:center;padding:24px}.card{width:min(420px,100%);background:#181b21;border:1px solid #303640;border-radius:14px;padding:28px}.field{margin:16px 0}.field label{display:block;font-size:12px;color:#c6cfdb;margin-bottom:6px}.field input{width:100%;background:#111419;color:#eef2f7;border:1px solid #303640;border-radius:8px;padding:11px 12px}.btn{width:100%;border:1px solid #285f91;border-radius:8px;background:#173654;color:white;padding:11px;cursor:pointer}.msg{font-size:12px;line-height:1.6;min-height:20px;margin-top:14px}.ok{color:#79e2aa}.error{color:#ff8b8b}a{color:#a9cfff}
+</style>
+</head>
+<body><main class="card"><h1>g-CAD</h1><p style="color:#9ca8b7;font-size:13px">新しいパスワードを設定</p><div class="field"><label>新しいパスワード</label><input id="password" type="password" minlength="8" autocomplete="new-password"></div><button id="save" class="btn">パスワードを変更</button><div id="message" class="msg">再設定リンクを確認しています…</div><p style="font-size:12px"><a href="index.html">ログインへ戻る</a></p></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script><script src="js/config.js"></script>
+<script>
+(async()=>{const cfg=window.GCAD_CONFIG;const msg=document.getElementById('message');const save=document.getElementById('save');const client=window.supabase.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey);let ready=false;function set(t,c=''){msg.className='msg '+c;msg.textContent=t}async function check(){const {data}=await client.auth.getSession();ready=!!data?.session;set(ready?'新しいパスワードを入力してください。':'再設定リンクが無効か期限切れです。もう一度再設定メールを送信してください。',ready?'':'error');save.disabled=!ready}client.auth.onAuthStateChange((event,session)=>{if(event==='PASSWORD_RECOVERY'||session){ready=true;set('新しいパスワードを入力してください。');save.disabled=false}});await check();save.addEventListener('click',async()=>{const password=document.getElementById('password').value;if(password.length<8){set('8文字以上で設定してください。','error');return}save.disabled=true;const {error}=await client.auth.updateUser({password});if(error){set('変更できませんでした。','error');save.disabled=false;return}set('パスワードを変更しました。ログイン画面へ戻れます。','ok');await client.auth.signOut()})})();
+</script></body></html>

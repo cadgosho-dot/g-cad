@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>g-CAD Online v0.6</title>
+<title>g-CAD Online v0.7</title>
 <style>
 :root{--bg:#101216;--panel:#181b21;--panel2:#20242c;--line:#303640;--text:#eef2f7;--muted:#9ca8b7;--accent:#66b3ff;--ok:#6ee7a8;--warn:#ffcc66;--danger:#ff7a7a}
 *{box-sizing:border-box}html,body{height:100%;margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
@@ -27,24 +27,24 @@ body.auth-pending #app{visibility:hidden}#authLoading{position:fixed;inset:0;dis
 <div id="authLoading">ログイン状態を確認しています…</div>
 <div id="app">
   <div id="top">
-    <div id="brand">g-CAD <span style="color:#8390a0;font-weight:500">Online v0.6</span></div>
+    <div id="brand">g-CAD <span style="color:#8390a0;font-weight:500">Online v0.7</span></div>
     <button id="newBtn">新規</button><button id="openBtn">開く</button><button id="saveBtn">保存</button><button id="undoBtn">元に戻す</button><button id="redoBtn">やり直す</button>
     <div class="spacer"></div><span class="badge" id="userBadge">認証確認中</span><button id="logoutBtn">ログアウト</button><span class="badge">単位: mm</span><button class="primary" id="exportBtn">STLを書き出す</button><input id="fileInput" type="file" accept="application/json,.json" hidden />
   </div>
   <aside id="left">
     <div class="section">
       <h3>2D作図</h3>
-      <div class="toolgrid"><button id="sketchTool">線を描く</button><button id="curveTool">曲線</button></div>
+      <div class="toolgrid"><button id="sketchTool" style="grid-column:1 / -1">線を描く</button></div>
       <div id="sketchControls" style="display:none;margin-top:8px">
         <div class="modebox" id="sketchModeText"></div>
         <div class="row"><button id="finishSketch" class="primary">作図を確定</button><button id="cancelSketch">キャンセル</button></div>
       </div>
       <div id="editControls" style="display:none;margin-top:8px">
-        <div class="modebox"><b>線を編集中</b><br>点をドラッグして形を変更します。始点と終点を重ねると面になります。</div>
+        <div class="modebox"><b>線を編集中</b><br>点をドラッグして形を変更します。始点と終点を重ねると面になります。黄色い四角は角、白い丸は滑らかな点です。</div>
         <button id="finishEdit" class="primary" style="width:100%">編集を終了</button>
       </div>
       <label class="check"><input type="checkbox" id="snapGrid" checked>0.5 mmへスナップ</label>
-      <div class="mini">線はクリックで点を追加します。始点へ戻ると自動で面になります。作成済みの線・曲線はダブルクリックで編集できます。</div>
+      <div class="mini">通常クリックで滑らかなベジェ曲線を描きます。<b>Ctrlを押しながらクリックした点だけ角</b>になります。始点へ戻ると自動で面になります。作成済みの線はダブルクリックで編集できます。</div>
     </div>
     <div class="section"><h3>立体化</h3><div class="toolgrid"><button id="extrudeFocus">押し出し</button><button id="sweepFocus">スイープ</button></div></div>
     <div class="section"><h3>基本立体</h3><div class="toolgrid"><button id="boxFocus">四角</button><button id="sphereFocus">球体</button></div></div>
@@ -54,7 +54,7 @@ body.auth-pending #app{visibility:hidden}#authLoading{position:fixed;inset:0;dis
   <main id="viewWrap">
     <canvas id="canvas" tabindex="0"></canvas><div id="operationPrompt"></div>
     <div id="viewHud"><button data-view="top">上</button><button data-view="front">正面</button><button data-view="right">右</button><button data-view="iso">透視</button><button id="fitBtn">全体表示</button></div>
-    <div id="viewInfo"></div><div id="hint">ドラッグ: 回転　｜　ホイール: 拡大縮小　｜　線をダブルクリック: 編集</div>
+    <div id="viewInfo"></div><div id="hint">通常クリック: 曲線点　｜　Ctrl+クリック: 角　｜　線をダブルクリック: 編集</div>
   </main>
   <aside id="right">
     <div class="section"><h3>選択</h3><div id="selectionInfo" class="summary">オブジェクトを選択してください。</div></div>
@@ -67,11 +67,11 @@ body.auth-pending #app{visibility:hidden}#authLoading{position:fixed;inset:0;dis
   <div id="status"><span id="statusText">空の作業空間です</span><span id="triText"></span></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
-<script src="js/config.js?v=0.6.0"></script>
-<script src="js/cad-state.js?v=0.6.0"></script>
-<script src="js/cad-geometry.js?v=0.6.0"></script>
-<script src="js/cad-sketch.js?v=0.6.0"></script>
-<script src="js/cad-app.js?v=0.6.0"></script>
-<script src="js/auth-guard.js?v=0.6.0"></script>
+<script src="js/config.js?v=0.7.0"></script>
+<script src="js/cad-state.js?v=0.7.0"></script>
+<script src="js/cad-geometry.js?v=0.7.0"></script>
+<script src="js/cad-sketch.js?v=0.7.0"></script>
+<script src="js/cad-app.js?v=0.7.0"></script>
+<script src="js/auth-guard.js?v=0.7.0"></script>
 </body>
 </html>

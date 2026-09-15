@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>g-CAD Online v0.4</title>
+<title>g-CAD Online v0.6</title>
 <style>
 :root{--bg:#101216;--panel:#181b21;--panel2:#20242c;--line:#303640;--text:#eef2f7;--muted:#9ca8b7;--accent:#66b3ff;--ok:#6ee7a8;--warn:#ffcc66;--danger:#ff7a7a}
 *{box-sizing:border-box}html,body{height:100%;margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
@@ -11,16 +11,14 @@ button,input,select{font:inherit}button{background:var(--panel2);color:var(--tex
 #app{height:100%;display:grid;grid-template-columns:280px 1fr 310px;grid-template-rows:48px 1fr 28px;grid-template-areas:"top top top" "left view right" "status status status"}
 #top{grid-area:top;display:flex;align-items:center;gap:8px;padding:7px 10px;background:#15181d;border-bottom:1px solid var(--line)}
 #brand{font-weight:700;margin-right:12px;white-space:nowrap}.spacer{flex:1}.badge{font-size:12px;color:var(--muted);border:1px solid var(--line);padding:4px 7px;border-radius:999px}
-#left{grid-area:left;background:var(--panel);border-right:1px solid var(--line);overflow:auto;padding:12px}
-#right{grid-area:right;background:var(--panel);border-left:1px solid var(--line);overflow:auto;padding:12px}
-#viewWrap{grid-area:view;position:relative;min-width:0;min-height:0;background:radial-gradient(circle at center,#1d222a 0,#101317 70%)}
-#canvas{width:100%;height:100%;display:block;touch-action:none;outline:none;cursor:default}
+#left{grid-area:left;background:var(--panel);border-right:1px solid var(--line);overflow:auto;padding:12px}#right{grid-area:right;background:var(--panel);border-left:1px solid var(--line);overflow:auto;padding:12px}
+#viewWrap{grid-area:view;position:relative;min-width:0;min-height:0;background:radial-gradient(circle at center,#1d222a 0,#101317 70%)}#canvas{width:100%;height:100%;display:block;touch-action:none;outline:none;cursor:default}
 #viewHud{position:absolute;left:12px;top:12px;display:flex;gap:6px;flex-wrap:wrap;max-width:75%}#viewHud button{padding:5px 8px;font-size:12px;background:#171b21dd}
 #viewInfo{position:absolute;right:12px;top:12px;text-align:right;font-size:12px;color:#c7d0dc;background:#101318cc;border:1px solid #2f3540;border-radius:6px;padding:7px 9px;line-height:1.55;pointer-events:none}
+#operationPrompt{display:none;position:absolute;left:50%;top:58px;transform:translateX(-50%);z-index:30;padding:9px 16px;border-radius:8px;border:1px solid #41678a;background:#12202df2;color:#dceeff;font-size:13px;font-weight:650;box-shadow:0 8px 28px #0008;pointer-events:none;white-space:nowrap}
 #hint{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);font-size:12px;color:var(--muted);background:#101318dd;border:1px solid #2b3039;border-radius:999px;padding:5px 10px;pointer-events:none;white-space:nowrap}
 #status{grid-area:status;display:flex;align-items:center;gap:14px;padding:0 10px;background:#12151a;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
-.section{margin-bottom:18px}.section h3{font-size:13px;margin:0 0 9px;color:#d7dee8;font-weight:650}.toolgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.toolgrid button{min-height:38px}.field{display:grid;grid-template-columns:1fr 100px;gap:8px;align-items:center;margin:7px 0}.field label{font-size:12px;color:#c2cbd6}.field input,.field select{width:100%;background:#111419;color:var(--text);border:1px solid var(--line);border-radius:5px;padding:6px 7px}.unit{position:relative}.unit input{padding-right:27px}.unit span{position:absolute;right:7px;top:7px;font-size:11px;color:#788493;pointer-events:none}.mini{font-size:11px;color:var(--muted);line-height:1.55}.divider{height:1px;background:var(--line);margin:12px 0}.row{display:flex;gap:7px;flex-wrap:wrap}.row button{flex:1;min-width:72px}.check{display:flex;gap:7px;align-items:center;font-size:12px;color:#c4cdd7;margin:7px 0}.tree{border:1px solid var(--line);border-radius:6px;overflow:hidden}.treeEmpty{padding:14px 10px;color:#6f7a88;font-size:12px}.treeItem{display:flex;align-items:center;gap:7px;padding:8px;border-bottom:1px solid #292e37;font-size:12px;cursor:pointer}.treeItem:last-child{border-bottom:0}.treeItem.selected{background:#203246}.dot{width:9px;height:9px;border-radius:50%;background:#9ca8b7;flex:0 0 auto}.dot.sketch{background:#67c7ff}.dot.solid{background:#d8b34e}.treeItem small{margin-left:auto;color:#758190}.summary{background:#111419;border:1px solid var(--line);border-radius:6px;padding:9px;font-size:12px;line-height:1.65}.summary strong{color:#dfe7f1}.ok{color:var(--ok)}.warn{color:var(--warn)}
-.modebox{border:1px solid #37516b;background:#12202d;border-radius:7px;padding:9px;font-size:12px;line-height:1.55;margin-bottom:10px}.modebox b{color:#b9dcff}
+.section{margin-bottom:18px}.section h3{font-size:13px;margin:0 0 9px;color:#d7dee8;font-weight:650}.toolgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.toolgrid button{min-height:38px}.field{display:grid;grid-template-columns:1fr 100px;gap:8px;align-items:center;margin:7px 0}.field label{font-size:12px;color:#c2cbd6}.field input,.field select{width:100%;background:#111419;color:var(--text);border:1px solid var(--line);border-radius:5px;padding:6px 7px}.unit{position:relative}.unit input{padding-right:27px}.unit span{position:absolute;right:7px;top:7px;font-size:11px;color:#788493;pointer-events:none}.mini{font-size:11px;color:var(--muted);line-height:1.55}.divider{height:1px;background:var(--line);margin:12px 0}.row{display:flex;gap:7px;flex-wrap:wrap}.row button{flex:1;min-width:72px}.check{display:flex;gap:7px;align-items:center;font-size:12px;color:#c4cdd7;margin:7px 0}.tree{border:1px solid var(--line);border-radius:6px;overflow:hidden}.treeEmpty{padding:14px 10px;color:#6f7a88;font-size:12px}.treeItem{display:flex;align-items:center;gap:7px;padding:8px;border-bottom:1px solid #292e37;font-size:12px;cursor:pointer}.treeItem:last-child{border-bottom:0}.treeItem.selected{background:#203246}.dot{width:9px;height:9px;border-radius:50%;background:#9ca8b7;flex:0 0 auto}.dot.sketch{background:#67c7ff}.dot.solid{background:#d8b34e}.treeItem small{margin-left:auto;color:#758190}.summary{background:#111419;border:1px solid var(--line);border-radius:6px;padding:9px;font-size:12px;line-height:1.65}.summary strong{color:#dfe7f1}.modebox{border:1px solid #37516b;background:#12202d;border-radius:7px;padding:9px;font-size:12px;line-height:1.55;margin-bottom:10px}.modebox b{color:#b9dcff}
 @media(max-width:980px){#app{grid-template-columns:230px 1fr;grid-template-areas:"top top" "left view" "status status"}#right{display:none}}
 body.auth-pending #app{visibility:hidden}#authLoading{position:fixed;inset:0;display:grid;place-items:center;background:#101216;color:#eef2f7;z-index:9999;font-size:14px}body:not(.auth-pending) #authLoading{display:none}
 </style>
@@ -29,20 +27,24 @@ body.auth-pending #app{visibility:hidden}#authLoading{position:fixed;inset:0;dis
 <div id="authLoading">ログイン状態を確認しています…</div>
 <div id="app">
   <div id="top">
-    <div id="brand">g-CAD <span style="color:#8390a0;font-weight:500">Online v0.4</span></div>
+    <div id="brand">g-CAD <span style="color:#8390a0;font-weight:500">Online v0.6</span></div>
     <button id="newBtn">新規</button><button id="openBtn">開く</button><button id="saveBtn">保存</button><button id="undoBtn">元に戻す</button><button id="redoBtn">やり直す</button>
     <div class="spacer"></div><span class="badge" id="userBadge">認証確認中</span><button id="logoutBtn">ログアウト</button><span class="badge">単位: mm</span><button class="primary" id="exportBtn">STLを書き出す</button><input id="fileInput" type="file" accept="application/json,.json" hidden />
   </div>
   <aside id="left">
     <div class="section">
       <h3>2D作図</h3>
-      <div class="toolgrid"><button id="pathTool">線・パス</button><button id="profileTool">断面・面</button></div>
+      <div class="toolgrid"><button id="sketchTool">線を描く</button><button id="curveTool">曲線</button></div>
       <div id="sketchControls" style="display:none;margin-top:8px">
         <div class="modebox" id="sketchModeText"></div>
         <div class="row"><button id="finishSketch" class="primary">作図を確定</button><button id="cancelSketch">キャンセル</button></div>
       </div>
+      <div id="editControls" style="display:none;margin-top:8px">
+        <div class="modebox"><b>線を編集中</b><br>点をドラッグして形を変更します。始点と終点を重ねると面になります。</div>
+        <button id="finishEdit" class="primary" style="width:100%">編集を終了</button>
+      </div>
       <label class="check"><input type="checkbox" id="snapGrid" checked>0.5 mmへスナップ</label>
-      <div class="mini">作図ツールを選ぶと上面表示になります。クリックで点を追加します。断面は確定時に自動で閉じます。</div>
+      <div class="mini">線はクリックで点を追加します。始点へ戻ると自動で面になります。作成済みの線・曲線はダブルクリックで編集できます。</div>
     </div>
     <div class="section"><h3>立体化</h3><div class="toolgrid"><button id="extrudeFocus">押し出し</button><button id="sweepFocus">スイープ</button></div></div>
     <div class="section"><h3>基本立体</h3><div class="toolgrid"><button id="boxFocus">四角</button><button id="sphereFocus">球体</button></div></div>
@@ -50,23 +52,26 @@ body.auth-pending #app{visibility:hidden}#authLoading{position:fixed;inset:0;dis
     <div class="section"><h3>表示</h3><label class="check"><input type="checkbox" id="showGrid" checked>基準グリッド</label><label class="check"><input type="checkbox" id="wireframe">ワイヤーフレーム</label></div>
   </aside>
   <main id="viewWrap">
-    <canvas id="canvas" tabindex="0"></canvas>
+    <canvas id="canvas" tabindex="0"></canvas><div id="operationPrompt"></div>
     <div id="viewHud"><button data-view="top">上</button><button data-view="front">正面</button><button data-view="right">右</button><button data-view="iso">透視</button><button id="fitBtn">全体表示</button></div>
-    <div id="viewInfo"></div><div id="hint">ドラッグ: 回転　｜　ホイール: 拡大縮小　｜　作図中はクリックで点追加</div>
+    <div id="viewInfo"></div><div id="hint">ドラッグ: 回転　｜　ホイール: 拡大縮小　｜　線をダブルクリック: 編集</div>
   </main>
   <aside id="right">
-    <div class="section" id="selectionSection"><h3>選択</h3><div id="selectionInfo" class="summary">オブジェクトを選択してください。</div></div>
-    <div class="section" id="extrudePanel"><h3>押し出し</h3><div class="field"><label for="extrudeProfile">断面</label><select id="extrudeProfile"></select></div><div class="field"><label for="extrudeHeight">高さ</label><div class="unit"><input id="extrudeHeight" type="number" value="3" step="0.1" min="0.1"><span>mm</span></div></div><button id="createExtrude" class="primary" style="width:100%">面を持ち上げる</button></div>
-    <div class="section" id="sweepPanel"><h3>スイープ</h3><div class="field"><label for="sweepPath">沿わせる線</label><select id="sweepPath"></select></div><div class="field"><label for="sweepProfile">断面</label><select id="sweepProfile"></select></div><button id="createSweep" class="primary" style="width:100%">断面を線に沿わせる</button><div class="mini" style="margin-top:7px">現在はXY平面上のパスに対して断面を沿わせます。ジュエリーの腕・ワイヤー形状の基礎に使えます。</div></div>
+    <div class="section"><h3>選択</h3><div id="selectionInfo" class="summary">オブジェクトを選択してください。</div></div>
+    <div class="section" id="extrudePanel"><h3>押し出し</h3><div class="field"><label for="extrudeProfile">面</label><select id="extrudeProfile"></select></div><div class="field"><label for="extrudeHeight">高さ</label><div class="unit"><input id="extrudeHeight" type="number" value="3" step="0.1" min="0.1"><span>mm</span></div></div><button id="createExtrude" class="primary" style="width:100%">面を持ち上げる</button></div>
+    <div class="section" id="sweepPanel"><h3>スイープ</h3><div class="mini">操作: <b>線を選択 → スイープ → 面を選択</b><br>面を選択すると自動で立体になります。Escでキャンセルできます。</div></div>
     <div class="section" id="boxPanel"><h3>四角を発生</h3><div class="field"><label>X幅</label><div class="unit"><input id="boxX" type="number" value="10" step="0.1" min="0.1"><span>mm</span></div></div><div class="field"><label>Y奥行</label><div class="unit"><input id="boxY" type="number" value="8" step="0.1" min="0.1"><span>mm</span></div></div><div class="field"><label>Z高さ</label><div class="unit"><input id="boxZ" type="number" value="3" step="0.1" min="0.1"><span>mm</span></div></div><button id="createBox" class="primary" style="width:100%">四角を作成</button></div>
     <div class="section" id="spherePanel"><h3>球体を発生</h3><div class="field"><label>X直径</label><div class="unit"><input id="sphereX" type="number" value="8" step="0.1" min="0.1"><span>mm</span></div></div><div class="field"><label>Y直径</label><div class="unit"><input id="sphereY" type="number" value="8" step="0.1" min="0.1"><span>mm</span></div></div><div class="field"><label>Z直径</label><div class="unit"><input id="sphereZ" type="number" value="8" step="0.1" min="0.1"><span>mm</span></div></div><button id="createSphere" class="primary" style="width:100%">球体を作成</button></div>
     <div class="section"><h3>STL出力</h3><div id="exportSummary" class="summary">立体がありません。</div><div class="divider"></div><button id="exportBtn2" class="primary" style="width:100%">全立体をSTL出力</button></div>
   </aside>
-  <div id="status"><span id="statusText">空の作業空間です</span><span id="triText"></span><span id="sizeText"></span></div>
+  <div id="status"><span id="statusText">空の作業空間です</span><span id="triText"></span></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
 <script src="js/config.js"></script>
 <script src="js/auth-guard.js"></script>
-<script src="js/cad.js"></script>
+<script src="js/cad-state.js"></script>
+<script src="js/cad-geometry.js"></script>
+<script src="js/cad-sketch.js"></script>
+<script src="js/cad-app.js"></script>
 </body>
 </html>

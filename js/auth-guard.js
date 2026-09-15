@@ -2,6 +2,24 @@
   'use strict';
   const cfg = window.GCAD_CONFIG || {};
 
+  function dispatchReady(user, access) {
+    window.dispatchEvent(new CustomEvent('gcad-auth-ready', { detail: { user, access } }));
+    window.dispatchEvent(new CustomEvent('jcad-auth-ready', { detail: { user, access } }));
+  }
+
+  function loadInteractionTools(user, access) {
+    if (document.querySelector('script[data-gcad-interaction-tools]')) {
+      dispatchReady(user, access);
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'js/interaction-tools.js';
+    script.dataset.gcadInteractionTools = '1';
+    script.onload = () => dispatchReady(user, access);
+    script.onerror = () => dispatchReady(user, access);
+    document.head.appendChild(script);
+  }
+
   async function ready() {
     if (!cfg.supabaseUrl || !cfg.supabasePublishableKey || !window.supabase?.createClient) {
       location.replace('index.html');
@@ -46,8 +64,7 @@
       location.replace('index.html');
     });
     document.body.classList.remove('auth-pending');
-    window.dispatchEvent(new CustomEvent('gcad-auth-ready', { detail: { user, access } }));
-    window.dispatchEvent(new CustomEvent('jcad-auth-ready', { detail: { user, access } }));
+    loadInteractionTools(user, access);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready, { once: true });
